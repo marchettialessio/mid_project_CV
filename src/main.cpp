@@ -1,24 +1,36 @@
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
 #include <opencv2/features2d.hpp>
-//prova
+#include "feature_matching.hpp"
+#include "utils.hpp"
+#include "visualization.hpp"
+#include <iostream>
+#include <vector>
 
-int main() {
-    cv::Mat img = cv::imread("../../resources/data/frog/0000.png");
-    cv::imshow("Source image", img);
+int main()
+{
+    const std::string path = "../../resources/data/car";
+    std::vector<cv::Mat> images;
 
-    cv::Mat gray;
-    cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
+    loadImages(path, images);
+
+    if (images.empty())
+    {
+        std::cerr << "Error: no valid images found." << std::endl;
+        return -1;
+    }
 
     cv::Ptr<cv::SIFT> detector = cv::SIFT::create();
-    std::vector<cv::KeyPoint> keypoints;
-    detector->detect(img, keypoints);
+    std::vector<cv::KeyPoint> keypointsFirstFrame;
+    cv::Mat descriptorsFirstFrame;
 
-    // Add results to image and save.
-    cv::Mat output;
-    cv::drawKeypoints(img, keypoints, output);
-    cv::imshow("Features", output);
-    cv::waitKey();
+    if (!extractFeatures(detector, images[0], keypointsFirstFrame, descriptorsFirstFrame))
+    {
+        std::cerr << "Error: no keypoints detected in the first frame." << std::endl;
+        return -1;
+    }
+
+    std::vector<double> distances = computeReferenceKeypointDistances(images, detector, keypointsFirstFrame, descriptorsFirstFrame);
+
+    runThresholdViewer(images[0], keypointsFirstFrame, distances);
 
     return 0;
 }
