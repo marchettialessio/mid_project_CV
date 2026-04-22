@@ -19,3 +19,4 @@ add_task(main main.cpp
     "${SOURCE_DIR}/utils.cpp"
     "${SOURCE_DIR}/feature_matching.cpp"
     "${SOURCE_DIR}/visualization.cpp")
+add_task(prova1 prova1.cpp)
