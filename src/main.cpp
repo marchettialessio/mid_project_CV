@@ -1,6 +1,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/features2d.hpp>
+//prova
 
 int main() {
     cv::Mat img = cv::imread("../resources/data/frog/0000.png");
