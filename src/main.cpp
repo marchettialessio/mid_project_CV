@@ -4,7 +4,7 @@
 //prova
 
 int main() {
-    cv::Mat img = cv::imread("../resources/data/frog/0000.png");
+    cv::Mat img = cv::imread("../../resources/data/frog/0000.png");
     cv::imshow("Source image", img);
 
     cv::Mat gray;
