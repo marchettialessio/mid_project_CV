@@ -1,19 +1,24 @@
 #include <opencv2/features2d.hpp>
-#include "feature_matching.hpp"
+#include <opencv2/highgui.hpp>
 #include "utils.hpp"
-#include "visualization.hpp"
+#include "process_images.hpp"
 #include <iostream>
 #include <vector>
 #include <filesystem>
 
-#include "tracking.hpp"
-#include <opencv2/highgui.hpp>
+int main(int argc, char** argv) {
+    if (argc < 2) {
+        std::cerr << "You have to specify the folder" << argv[0];
+        return -1;
+    }
 
-int main()
-{
-    const std::filesystem::path path = std::filesystem::path(PROJECT_SOURCE_DIR) / "resources" / "data" / "frog";
+    // Get the foldetpath
+    std::string folderName = argv[1];
+
+    const std::filesystem::path path = std::filesystem::path(PROJECT_SOURCE_DIR) / "resources" / "data" /  folderName;
     std::vector<cv::Mat> images;
 
+    // I load all images
     loadImages(path.string(), images);
 
     if (images.empty())
@@ -22,30 +27,20 @@ int main()
         return -1;
     }
 
-    cv::Ptr<cv::SIFT> detector = cv::SIFT::create(0, 6);
-    std::vector<cv::KeyPoint> keypointsFirstFrame;
-    cv::Mat descriptorsFirstFrame;
+    constexpr float minMotion = 0.005f;
+    // bird
+    // car 0.4f SIFT
+    // frog 0.005f SIFT
+    // sheep 0.05
+    // squirrel
 
-    if (!extractFeatures(detector, images[0], keypointsFirstFrame, descriptorsFirstFrame))
-    {
-        std::cerr << "Error: no keypoints detected in the first frame." << std::endl;
-        return -1;
+    cv::Ptr<cv::SIFT> detector = cv::SIFT::create();
+
+    processImageSequence<cv::SIFT>(images, detector, minMotion);
+
+    while (cv::waitKey() != 'q' && cv::waitKey() != 27) {
+        // Wait until user presses 'q' or 'ESC'
     }
 
-    // std::vector<double> distances = computeReferenceKeypointDistances(images, detector, keypointsFirstFrame, descriptorsFirstFrame);
-
-    cv::BFMatcher matcher(cv::NORM_L2, false);
-    Tracking tracking(keypointsFirstFrame, descriptorsFirstFrame, 70);
-    for (size_t i = 1; i < images.size(); i++)
-    {
-
-        tracking.updateTracking(images[i], detector, matcher);
-    }
-     //runThresholdViewer(images[0], keypointsFirstFrame, distances);
-
-    cv::Mat output;
-    drawFilteredKeypoints(images[0], tracking.returnFeaturesCurrent(keypointsFirstFrame), output);
-    cv::imshow("prova", output);
-    int key = cv::waitKey();
     return 0;
 }

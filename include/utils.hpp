@@ -9,8 +9,7 @@
 // Function to load all images from a specified directory
 void loadImages(const std::string& directory, std::vector<cv::Mat>& images);
 
-// Function to filter keypoints based on a distance threshold
-std::vector<cv::KeyPoint> filterKeypointsAboveThreshold(const std::vector<cv::KeyPoint> &keypoints, const std::vector<double> &distances, int threshold);
+std::vector<cv::Scalar> generateRandomColors(int num_colors);
 
 
 #endif // UTILS_HPP
