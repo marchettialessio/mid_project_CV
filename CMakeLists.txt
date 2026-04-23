@@ -18,5 +18,6 @@ function(add_task target_name source_file)
 endfunction()
 add_task(main main.cpp
     "${SOURCE_DIR}/utils.cpp"
+    "${SOURCE_DIR}/optical_flow.cpp"
     "${SOURCE_DIR}/process_images.cpp")
 add_task(prova1 prova1.cpp)

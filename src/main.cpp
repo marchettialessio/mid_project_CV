@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
     // Get the foldetpath
     std::string folderName = argv[1];
 
-    const std::filesystem::path path = std::filesystem::path(PROJECT_SOURCE_DIR) / "resources" / "data" / "frog" / folderName;
+    const std::filesystem::path path = std::filesystem::path(PROJECT_SOURCE_DIR) / "resources" / "data" /  folderName;
     std::vector<cv::Mat> images;
 
     // I load all images

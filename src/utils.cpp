@@ -57,7 +57,7 @@ void loadImages(const std::string &directory, std::vector<cv::Mat> &images)
 
         for (const auto &image_path : image_paths)
         {
-            cv::Mat img = cv::imread(image_path.string(), cv::IMREAD_GRAYSCALE);
+            cv::Mat img = cv::imread(image_path.string());
 
             if (!img.empty())
             {
