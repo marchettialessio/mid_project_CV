@@ -35,8 +35,7 @@ void loadImages(const std::string &directory, std::vector<cv::Mat> &images)
                           << "' (" << ec.message() << ")." << std::endl;
                 if (ec == std::errc::operation_not_permitted || ec == std::errc::permission_denied)
                 {
-                    std::cerr << "Hint (macOS): grant VS Code access to Desktop in"
-                              << " System Settings > Privacy & Security > Files and Folders."
+                    std::cerr << "Operation not permitted: check your permissions for the directory."
                               << std::endl;
                 }
                 return;
@@ -72,18 +71,18 @@ void loadImages(const std::string &directory, std::vector<cv::Mat> &images)
     }
 }
 
-std::vector<cv::KeyPoint> filterKeypointsAboveThreshold(const std::vector<cv::KeyPoint> &keypoints, const std::vector<double> &distances, int threshold)
+std::vector<cv::Scalar> generateRandomColors(int num_colors)
 {
-    std::vector<cv::KeyPoint> filteredKeypoints;
-    filteredKeypoints.reserve(keypoints.size());
+    std::vector<cv::Scalar> colors;
+    cv::RNG rng;
 
-    for (size_t i = 0; i < keypoints.size(); ++i)
+    for (int i = 0; i < num_colors; i++)
     {
-        if (distances[i] > static_cast<double>(threshold))
-        {
-            filteredKeypoints.push_back(keypoints[i]);
-        }
+        int r = rng.uniform(0, 256);
+        int g = rng.uniform(0, 256);
+        int b = rng.uniform(0, 256);
+        colors.push_back(cv::Scalar(r, g, b));
     }
 
-    return filteredKeypoints;
+    return colors;
 }
