@@ -2,7 +2,6 @@
 #define FEATURE_MATCHING_HPP
 
 #include <vector>
-#include <opencv2/core.hpp>
 #include <opencv2/features2d.hpp>
 
 // Helper function to extract keypoints and descriptors from an image using the provided SIFT detector

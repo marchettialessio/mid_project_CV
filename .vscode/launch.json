@@ -1,0 +1,61 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "CMake/Launch - main",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/bin/main",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb",
+      "miDebuggerPath": "${workspaceFolder}/.vscode/lldb-mi-wrapper.sh",
+      "preLaunchTask": "CMake: Build (Debug)"
+    },
+    {
+      "name": "CMake/Launch - prova1",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/bin/prova1",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb",
+      "miDebuggerPath": "${workspaceFolder}/.vscode/lldb-mi-wrapper.sh",
+      "preLaunchTask": "CMake: Build (Debug)"
+    },
+    {
+      "name": "Debug main (CMake Debug)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/bin/main",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb",
+      "miDebuggerPath": "${workspaceFolder}/.vscode/lldb-mi-wrapper.sh",
+      "preLaunchTask": "CMake: Build (Debug)"
+    },
+    {
+      "name": "Debug prova1 (CMake Debug)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/bin/prova1",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb",
+      "miDebuggerPath": "${workspaceFolder}/.vscode/lldb-mi-wrapper.sh",
+      "preLaunchTask": "CMake: Build (Debug)"
+    }
+  ]
+}

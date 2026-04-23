@@ -13,10 +13,12 @@ function(add_task target_name source_file)
     add_executable(${target_name} "${SOURCE_DIR}/${source_file}" ${ARGN})
     target_include_directories(${target_name} PRIVATE "${INCLUDE_DIR}" ${OpenCV_INCLUDE_DIRS})
     target_link_libraries(${target_name} PRIVATE ${OpenCV_LIBS})
+    target_compile_definitions(${target_name} PRIVATE PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
     set_target_properties(${target_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 endfunction()
 add_task(main main.cpp
     "${SOURCE_DIR}/utils.cpp"
     "${SOURCE_DIR}/feature_matching.cpp"
-    "${SOURCE_DIR}/visualization.cpp")
+    "${SOURCE_DIR}/visualization.cpp"
+    "${SOURCE_DIR}/tracking.cpp")
 add_task(prova1 prova1.cpp)
