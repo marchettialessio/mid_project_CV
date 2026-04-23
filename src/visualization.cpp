@@ -1,26 +1,9 @@
 #include "visualization.hpp"
+#include "utils.hpp"
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <algorithm>
 #include <cmath>
-
-namespace
-{
-std::vector<cv::KeyPoint> filterKeypointsAboveThreshold(const std::vector<cv::KeyPoint> &keypoints, const std::vector<double> &distances, int threshold)
-{
-    std::vector<cv::KeyPoint> filteredKeypoints;
-    filteredKeypoints.reserve(keypoints.size());
-
-    for (size_t i = 0; i < keypoints.size(); ++i)
-    {
-        if (distances[i] > static_cast<double>(threshold))
-        {
-            filteredKeypoints.push_back(keypoints[i]);
-        }
-    }
-
-    return filteredKeypoints;
-}
 
 void drawFilteredKeypoints(const cv::Mat &image, const std::vector<cv::KeyPoint> &filteredKeypoints, cv::Mat &output)
 {
@@ -42,7 +25,6 @@ void drawFilteredKeypoints(const cv::Mat &image, const std::vector<cv::KeyPoint>
     cv::Rect bbox = cv::boundingRect(points);
     cv::rectangle(output, bbox, cv::Scalar(0, 0, 255), 2);
 }
-} // namespace
 
 void runThresholdViewer(const cv::Mat &referenceImage, const std::vector<cv::KeyPoint> &referenceKeypoints, const std::vector<double> &distances)
 {

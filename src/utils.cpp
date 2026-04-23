@@ -4,22 +4,45 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
-// Function to load all images from a specified directory
 void loadImages(const std::string &directory, std::vector<cv::Mat> &images)
 {
     try
     {
-        if (!std::filesystem::exists(directory))
+        std::error_code ec;
+
+        if (!std::filesystem::exists(directory, ec))
         {
-            std::cerr << "Error: the directory does not exist." << std::endl;
+            if (ec)
+            {
+                std::cerr << "Error: unable to access directory '" << directory
+                          << "' (" << ec.message() << ")." << std::endl;
+            }
+            else
+            {
+                std::cerr << "Error: the directory does not exist." << std::endl;
+            }
             return;
         }
 
         std::vector<std::filesystem::path> image_paths;
 
         //Iterate through the directory and collect valid image paths
-        for (const auto &entry : std::filesystem::directory_iterator(directory))
+        for (std::filesystem::directory_iterator it(directory, ec), end; it != end; it.increment(ec))
         {
+            if (ec)
+            {
+                std::cerr << "Error: cannot iterate directory '" << directory
+                          << "' (" << ec.message() << ")." << std::endl;
+                if (ec == std::errc::operation_not_permitted || ec == std::errc::permission_denied)
+                {
+                    std::cerr << "Hint (macOS): grant VS Code access to Desktop in"
+                              << " System Settings > Privacy & Security > Files and Folders."
+                              << std::endl;
+                }
+                return;
+            }
+
+            const auto &entry = *it;
             if (entry.is_regular_file() && cv::haveImageReader(entry.path().string()))
             {
                 image_paths.push_back(entry.path());
@@ -47,4 +70,20 @@ void loadImages(const std::string &directory, std::vector<cv::Mat> &images)
     {
         std::cerr << "Exception: " << e.what() << std::endl;
     }
+}
+
+std::vector<cv::KeyPoint> filterKeypointsAboveThreshold(const std::vector<cv::KeyPoint> &keypoints, const std::vector<double> &distances, int threshold)
+{
+    std::vector<cv::KeyPoint> filteredKeypoints;
+    filteredKeypoints.reserve(keypoints.size());
+
+    for (size_t i = 0; i < keypoints.size(); ++i)
+    {
+        if (distances[i] > static_cast<double>(threshold))
+        {
+            filteredKeypoints.push_back(keypoints[i]);
+        }
+    }
+
+    return filteredKeypoints;
 }
