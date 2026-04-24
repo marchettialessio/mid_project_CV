@@ -44,7 +44,7 @@ void processImageSequence(std::vector<cv::Mat> images, cv::Ptr<T> detector, floa
     // TODO: se KP.size va a 0 break
     OpticalFlow opticalFlow(currKP, survivingKP, minMotion);
     std::vector<cv::Point2f> verifiedFirstFrameKP; // Here i store all the keypoints of the first frame that survive during an optimal flow pass
-    int hybridApproachRate = 10;                   // Every N frames, we will redetect keypoints to handle occlusions and new features
+    int hybridApproachRate = images.size() / 2;    // Every N frames, we will redetect keypoints to handle occlusions and new features
     int currentFrameCounter = 0;                   // To keep track of the current frame number for the hybrid approach
 
     // Read and process images
@@ -61,6 +61,7 @@ void processImageSequence(std::vector<cv::Mat> images, cv::Ptr<T> detector, floa
             currentFrameCounter = 0; // reset counter
             mask = cv::Mat::zeros(firstFrame.size(), firstFrame.type());
             updateTrackedKeypoints<T>(firstFrameDescriptors, keypoints, oldGray, detector, verifiedFirstFrameKP, opticalFlow);
+            minMotion *= 4;
         }
         else
         {
