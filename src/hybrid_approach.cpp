@@ -3,7 +3,7 @@
 #include <opencv2/features2d.hpp>
 
 template <typename T>
-void updateTrackedKeypoints(cv::Mat firstFrameDescriptors, std::vector<cv::KeyPoint> firstFrameKeypoints, cv::Mat currentFrameGray, const cv::Ptr<T> &detector, std::vector<cv::Point2f> &verifiedFirstFrameKP, OpticalFlow &opticalFlow)
+void updateTrackedKeypoints(const cv::Mat &firstFrameDescriptors, const std::vector<cv::KeyPoint> &firstFrameKeypoints, const cv::Mat &currentFrameGray, const cv::Ptr<T> &detector, std::vector<cv::Point2f> &verifiedFirstFrameKP, OpticalFlow &opticalFlow)
 {
 
     // i want to keep all the keypoints that survived so far, also if they are no longer tracked
@@ -49,7 +49,7 @@ void updateTrackedKeypoints(cv::Mat firstFrameDescriptors, std::vector<cv::KeyPo
     std::vector<cv::DMatch> matches;
     matcher.match(firstFrameDescriptors, currentFrameDescriptors, matches);
 
-    // i've done matches, now i want to update the nuew keypoints
+    // i've done matches, now i want to update the new keypoints
     std::vector<cv::Point2f> currKP;
     std::vector<cv::Point2f> survivedKP;
     for (auto match : matches)
@@ -65,4 +65,4 @@ void updateTrackedKeypoints(cv::Mat firstFrameDescriptors, std::vector<cv::KeyPo
     opticalFlow.setCurrKP(currKP);
     opticalFlow.setSurvivingKP(survivedKP);
 }
-template void updateTrackedKeypoints<cv::SIFT>(cv::Mat firstFrameDescriptors, std::vector<cv::KeyPoint> firstFrameKeypoints, cv::Mat currentFrameGray, const cv::Ptr<cv::SIFT> &detector, std::vector<cv::Point2f> &verifiedFirstFrameKP, OpticalFlow &opticalFlow);
+template void updateTrackedKeypoints<cv::SIFT>(const cv::Mat &firstFrameDescriptors, const std::vector<cv::KeyPoint> &firstFrameKeypoints, const cv::Mat &currentFrameGray, const cv::Ptr<cv::SIFT> &detector, std::vector<cv::Point2f> &verifiedFirstFrameKP, OpticalFlow &opticalFlow);

@@ -7,7 +7,7 @@
 
 
 template<typename T>
-void updateTrackedKeypoints(cv::Mat firstFrameDescriptors, std::vector<cv::KeyPoint> firstFrameKeypoints, cv::Mat currentFrameGray, const cv::Ptr<T> &detector, std::vector<cv::Point2f> &verifiedFirstFrameKP, OpticalFlow &opticalFlow);
+void updateTrackedKeypoints(const cv::Mat &firstFrameDescriptors, const std::vector<cv::KeyPoint> &firstFrameKeypoints, const cv::Mat &currentFrameGray, const cv::Ptr<T> &detector, std::vector<cv::Point2f> &verifiedFirstFrameKP, OpticalFlow &opticalFlow);
 
 #endif // HYBRID_APPROACH_HPP
 

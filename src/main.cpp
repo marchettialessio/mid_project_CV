@@ -8,14 +8,14 @@
 
 int main(int argc, char** argv) {
     if (argc < 2) {
-        std::cerr << "You have to specify the folder" << argv[0];
-        return -1;
+      //  std::cerr << "You have to specify the folder" << argv[0];
+       // return -1;
     }
 
     // Get the foldetpath
-    std::string folderName = argv[1];
+    //std::string folderName = argv[1];
 
-    const std::filesystem::path path = std::filesystem::path(PROJECT_SOURCE_DIR) / "resources" / "data" /  folderName;
+    const std::filesystem::path path = std::filesystem::path(PROJECT_SOURCE_DIR) / "resources" / "data" /  "squirrel";//folderName;
     std::vector<cv::Mat> images;
 
     // I load all images
@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    constexpr float minMotion = 0.05f;
+    constexpr float minMotion = 0.1f;
     // bird
     // car 0.4f SIFT
     // frog 0.005f SIFT
