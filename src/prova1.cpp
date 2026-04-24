@@ -4,7 +4,7 @@
 void opticalFLow(std::vector<std::string> images) {
     // TODO: tunare per ogni immagine e in base al detector utilizzato, ognuna ha la sua (forse per robustezza ne serve una unica, non deve dipendere dalle immagini)
     // TODO: al massimo si può mettere un tot di valori e in base ai risultati confrontati con le label scegliere il migliore
-    constexpr float minMotion = 0.005f;
+    constexpr float minMotion = 0.4f;
     // bird
     // car 0.4f SIFT
     // frog 0.005f SIFT

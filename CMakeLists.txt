@@ -19,5 +19,6 @@ endfunction()
 add_task(main main.cpp
     "${SOURCE_DIR}/utils.cpp"
     "${SOURCE_DIR}/optical_flow.cpp"
+    "${SOURCE_DIR}/hybrid_approach.cpp"
     "${SOURCE_DIR}/process_images.cpp")
 add_task(prova1 prova1.cpp)

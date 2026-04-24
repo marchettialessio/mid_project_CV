@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    constexpr float minMotion = 0.005f;
+    constexpr float minMotion = 0.05f;
     // bird
     // car 0.4f SIFT
     // frog 0.005f SIFT

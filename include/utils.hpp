@@ -12,4 +12,6 @@ void loadImages(const std::string& directory, std::vector<cv::Mat>& images);
 std::vector<cv::Scalar> generateRandomColors(int num_colors);
 
 
+
+
 #endif // UTILS_HPP

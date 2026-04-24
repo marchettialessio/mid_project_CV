@@ -8,4 +8,6 @@
 template<typename T>
 void processImageSequence(std::vector<cv::Mat> images, cv::Ptr<T> detector, float minMotion);
 
+template <typename T>
+bool extractFeatures(const cv::Ptr<T> &detector, const cv::Mat &image, std::vector<cv::KeyPoint> &keypoints, cv::Mat &descriptors);
 #endif // PROCESS_IMAGES_HPP
