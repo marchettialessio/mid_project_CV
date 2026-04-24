@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
 
     // Get the foldetpath
     std::string folderName = argv[1];
-
+    int selection = std::stoi(argv[2]);
     const std::filesystem::path path = std::filesystem::path(PROJECT_SOURCE_DIR) / "resources" / "data" /  folderName;
     std::vector<cv::Mat> images;
 
@@ -27,16 +27,28 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    constexpr float minMotion = 0.005f;
+    constexpr float minMotion = 0.2f;
     // bird
     // car 0.4f SIFT
     // frog 0.005f SIFT
     // sheep 0.05
     // squirrel
+    cv::Ptr<cv::Feature2D> detector;
+    if(selection==0){
+        detector = cv::SIFT::create();
+    }
+    else if(selection==1){
+        detector = cv::ORB::create();
+    }
+    else if(selection==2){
+        detector = cv::KAZE::create();
+    }
+    else{
+        std::cerr << "Invalid selection. Use 0 for SIFT and 1 for ORB 2 for KAZE" << std::endl;
+        return -1;
+    }
 
-    cv::Ptr<cv::SIFT> detector = cv::SIFT::create();
-
-    processImageSequence<cv::SIFT>(images, detector, minMotion);
+    processImageSequence<cv::Feature2D>(images, detector, minMotion);
 
     while (cv::waitKey() != 'q' && cv::waitKey() != 27) {
         // Wait until user presses 'q' or 'ESC'
