@@ -2,6 +2,7 @@
 #include <opencv2/highgui.hpp>
 #include "utils.hpp"
 #include "process_images.hpp"
+#include "evaluate_performace.hpp"
 #include <iostream>
 #include <vector>
 #include <filesystem>
@@ -12,8 +13,19 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    // Get the foldetpath
+    // se chiamato con evaluate, esegue la valutazione e termina.
+    std::string arg1 = argv[1];
+    if (arg1 == "evaluate") {
+        evaluatePerformance(PROJECT_SOURCE_DIR);
+        return 0;
+    }
+
+    // altrimenti, normale processo di visualizzazione
     std::string folderName = argv[1];
+    if (argc < 3) {
+        std::cerr << "You must provide detector selection as second argument (0=SIFT,1=ORB,2=KAZE)" << std::endl;
+        return -1;
+    }
     int selection = std::stoi(argv[2]);
     const std::filesystem::path path = std::filesystem::path(PROJECT_SOURCE_DIR) / "resources" / "data" /  folderName;
     std::vector<cv::Mat> images;
@@ -48,7 +60,8 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    processImageSequence<cv::Feature2D>(images, detector, minMotion);
+    // chiama processImageSequence con show=true per visualizzare i risultati
+    processImageSequence(images, detector, minMotion, nullptr, true);
 
     while (cv::waitKey() != 'q' && cv::waitKey() != 27) {
         // Wait until user presses 'q' or 'ESC'
