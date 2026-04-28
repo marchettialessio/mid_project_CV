@@ -1,3 +1,7 @@
+/*
+@author: Nicolò Spuri
+*/
+
 #include "process_images.hpp"
 #include "utils.hpp"
 #include <opencv2/features2d.hpp>
@@ -9,7 +13,7 @@ bool extractFeatures(const cv::Ptr<cv::Feature2D> &detector, const cv::Mat &imag
     detector->detectAndCompute(image, cv::noArray(), keypoints, descriptors);
     return !descriptors.empty() && !keypoints.empty();
 }
-void processImageSequence(std::vector<cv::Mat> images, cv::Ptr<cv::Feature2D> detector, float minMotion, cv::Rect* outBox, bool show) {
+void processImageSequence(std::vector<cv::Mat> images, cv::Ptr<cv::Feature2D> detector, float minMotion, cv::Rect* outBox, std::string savePath) {
 
     std::vector<cv::Scalar> colors = generateRandomColors(100);    // Generate random colors for drawing
 
@@ -27,9 +31,6 @@ void processImageSequence(std::vector<cv::Mat> images, cv::Ptr<cv::Feature2D> de
         return;                                     // Extract descriptors (not used in this code but can be useful for future extensions)
     cv::KeyPoint::convert(keypoints, firstFrameKP); // Convert to point in 2D
     
-
-    std::cout << "Keypoints size: " << firstFrameKP.size() << std::endl;
-
     // Create a mask image for drawing purposes
     cv::Mat mask = cv::Mat::zeros(firstFrame.size(), firstFrame.type());
     // Set frame and keypoints for the next iteration
@@ -56,7 +57,6 @@ void processImageSequence(std::vector<cv::Mat> images, cv::Ptr<cv::Feature2D> de
 
         if (hybridApproachRate == currentFrameCounter + 1)
         {
-            std::cout << "Hybrid approach: Redetecting keypoints at frame " << i << std::endl;
             currentFrameCounter = 0; // reset counter
             mask = cv::Mat::zeros(firstFrame.size(), firstFrame.type());
             updateTrackedKeypoints(firstFrameDescriptors, keypoints, oldGray, detector, verifiedFirstFrameKP, opticalFlow);
@@ -107,23 +107,28 @@ void processImageSequence(std::vector<cv::Mat> images, cv::Ptr<cv::Feature2D> de
 
         else if(survivingKP.size() <= 20) {
             std::cout << "Not enough keypoints to track. Ending process." << std::endl;
-            if (show) {
+            if (savePath == "display") {
                 cv::imshow("Frame" + std::to_string(i), img);
                 cv::imshow("Initial Frame", newInitialFrame);
                 int keyboard = cv::waitKey();
                 if (keyboard == 'q' || keyboard == 27)
                     break;
+            } else if (!savePath.empty()) {
+                cv::imwrite(savePath, newInitialFrame);
+                break;
             } else {
                 break;
             }
         }
         else if(i==images.size()-1) {
-            if (show) {
+            if (savePath == "display") {
                 cv::imshow("Frame" + std::to_string(i), img);
                 cv::imshow("Initial Frame", newInitialFrame);
                 int keyboard = cv::waitKey();
                 if (keyboard == 'q' || keyboard == 27)
                     break;
+            } else if (!savePath.empty()) {
+                cv::imwrite(savePath, newInitialFrame);
             }
         }
      

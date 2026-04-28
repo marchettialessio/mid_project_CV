@@ -1,3 +1,6 @@
+/*
+@author: Alessio Marchetti
+*/
 #ifndef HYBRID_APPROACH_HPP
 #define HYBRID_APPROACH_HPP
 #include <opencv2/opencv.hpp>

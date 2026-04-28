@@ -21,4 +21,5 @@ add_task(main main.cpp
     "${SOURCE_DIR}/optical_flow.cpp"
     "${SOURCE_DIR}/process_images.cpp"
     "${SOURCE_DIR}/hybrid_approach.cpp"
-    "${SOURCE_DIR}/evaluate_performace.cpp")
+    "${SOURCE_DIR}/evaluate_performace.cpp"
+    "${SOURCE_DIR}/report_generator.cpp")

@@ -1,3 +1,7 @@
+/*
+@author: Nicolò Spuri
+*/
+
 #ifndef OPTICAL_FLOW_HPP
 #define OPTICAL_FLOW_HPP
 

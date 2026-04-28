@@ -1,32 +1,28 @@
+/*
+@author: Sirio Trentin
+*/
 #include <opencv2/features2d.hpp>
 #include <opencv2/highgui.hpp>
 #include "utils.hpp"
 #include "process_images.hpp"
 #include "evaluate_performace.hpp"
+#include "report_generator.hpp"
 #include <iostream>
 #include <vector>
 #include <filesystem>
 
 int main(int argc, char** argv) {
-    if (argc < 2) {
-        std::cerr << "You have to specify the folder" << argv[0];
-        return -1;
-    }
 
-    // se chiamato con evaluate, esegue la valutazione e termina.
-    std::string arg1 = argv[1];
-    if (arg1 == "evaluate") {
-        evaluatePerformance(PROJECT_SOURCE_DIR);
+    //if nothing specified, run evaluation and generate report
+    if (argc == 1) {
+        EvaluationResults results = evaluatePerformance(PROJECT_SOURCE_DIR);
+        generateLatexResults(results, std::string(PROJECT_SOURCE_DIR) + "/report");
         return 0;
     }
 
-    // altrimenti, normale processo di visualizzazione
+    // otherwise, run the tracking on the specified folder with the specified detector
     std::string folderName = argv[1];
-    if (argc < 3) {
-        std::cerr << "You must provide detector selection as second argument (0=SIFT,1=ORB,2=KAZE)" << std::endl;
-        return -1;
-    }
-    int selection = std::stoi(argv[2]);
+
     const std::filesystem::path path = std::filesystem::path(PROJECT_SOURCE_DIR) / "resources" / "data" /  folderName;
     std::vector<cv::Mat> images;
 
@@ -40,28 +36,11 @@ int main(int argc, char** argv) {
     }
 
     constexpr float minMotion = 0.2f;
-    // bird
-    // car 0.4f SIFT
-    // frog 0.005f SIFT
-    // sheep 0.05
-    // squirrel
-    cv::Ptr<cv::Feature2D> detector;
-    if(selection==0){
-        detector = cv::SIFT::create();
-    }
-    else if(selection==1){
-        detector = cv::ORB::create();
-    }
-    else if(selection==2){
-        detector = cv::KAZE::create();
-    }
-    else{
-        std::cerr << "Invalid selection. Use 0 for SIFT and 1 for ORB 2 for KAZE" << std::endl;
-        return -1;
-    }
 
-    // chiama processImageSequence con show=true per visualizzare i risultati
-    processImageSequence(images, detector, minMotion, nullptr, true);
+    cv::Ptr<cv::Feature2D> detector = cv::ORB::create();
+
+    // Call processImageSequence with savePath="display" to show results
+    processImageSequence(images, detector, minMotion, nullptr, "display");
 
     while (cv::waitKey() != 'q' && cv::waitKey() != 27) {
         // Wait until user presses 'q' or 'ESC'

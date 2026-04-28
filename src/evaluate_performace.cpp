@@ -1,3 +1,6 @@
+/*
+@author: Sirio Trentin
+*/
 #include "evaluate_performace.hpp"
 #include "utils.hpp"
 #include "process_images.hpp"
@@ -12,29 +15,37 @@ static double computeIoU(const cv::Rect &a, const cv::Rect &b) {
     return interArea / unionArea;
 }
 
-void evaluatePerformance(const std::string& directory_progetto) {
+EvaluationResults evaluatePerformance(const std::string& directory_progetto) {
     const std::filesystem::path dataPath = std::filesystem::path(directory_progetto) / "resources" / "data";
     const std::filesystem::path labelsPath = std::filesystem::path(directory_progetto) / "resources" / "labels";
+    const std::filesystem::path reportImagesPath = std::filesystem::path(directory_progetto) / "report" / "images";
+
+    if (!std::filesystem::exists(reportImagesPath)) {
+        std::filesystem::create_directories(reportImagesPath);
+    }
 
     // ORB per la valutazione
     cv::Ptr<cv::Feature2D> detector = cv::ORB::create();
     constexpr float minMotion = 0.2f;
 
-    std::vector<double> ious;
-    int correct_folders = 0;
-    int total_folders = 0;
+    EvaluationResults results;
+    results.correct_folders = 0;
+    results.total_folders = 0;
 
     for (auto &entry : std::filesystem::directory_iterator(dataPath)) {
         std::string folderName = entry.path().filename().string();
-        std::cout << "Valutazione cartella: " << folderName << std::endl;
+        if (folderName == ".DS_Store" || !std::filesystem::is_directory(entry.path())) continue;
+        std::cout << "Folder evaluation: " << folderName << std::endl;
 
         // caricamento immagini
         std::vector<cv::Mat> images;
         loadImages(entry.path().string(), images);
 
+        std::string currentImagePath = (reportImagesPath / (folderName + ".png")).string();
+
         // codice di verifica sulla cartella corrente
         cv::Rect predicted;
-        processImageSequence(images, detector, minMotion, &predicted, false);
+        processImageSequence(images, detector, minMotion, &predicted, currentImagePath);
 
         // lettura labels, con squirrel serve specificare se double o single.
         std::filesystem::path labelFile;
@@ -52,21 +63,37 @@ void evaluatePerformance(const std::string& directory_progetto) {
         cv::Rect gt(x1,y1, x2 - x1, y2 - y1);
 
         double iou = computeIoU(predicted, gt);
-        std::cout << "  IoU = " << iou << std::endl;
-        ious.push_back(iou);
-        if (iou > 0.5) correct_folders++;
-        total_folders++;
+        std::cout << "  -IoU = " << iou << std::endl;
+        results.ious.push_back(iou);
+        results.categories.push_back(folderName);
+        results.imagePaths.push_back(currentImagePath);
+        if (iou > 0.5) results.correct_folders++;
+        results.total_folders++;
 
     }
 
-    double meanIoU = 0.0;
-    for (double v : ious) meanIoU += v;
-    meanIoU = meanIoU/static_cast<double>(ious.size());
+    results.meanIoU = 0.0;
+    for (double v : results.ious) results.meanIoU += v;
+    results.meanIoU = results.meanIoU / static_cast<double>(results.ious.size());
 
-    double accuracy = correct_folders;
+    results.accuracy = static_cast<double>(results.correct_folders) / results.total_folders;
 
-    std::cout << "Risultati:" << std::endl;
-    std::cout << " Cartelle valutate: " << total_folders << std::endl;
-    std::cout << "  IoU media: " << meanIoU << std::endl;
-    std::cout << "  Accuracy: " << accuracy << std::endl;
+    std::cout << "Results:" << std::endl;
+    std::cout << "  -Evaluated Folders: " << results.total_folders << std::endl;
+    std::cout << "  -Mean IoU: " << results.meanIoU << std::endl;
+    std::cout << "  -Accuracy: " << results.accuracy << std::endl;
+    
+    // Show the saved images with bounding boxes
+    for (const auto& path : results.imagePaths) {
+        cv::Mat resultImg = cv::imread(path);
+        if (!resultImg.empty()) {
+            cv::imshow("Evaluation Result: " + path, resultImg);
+        }
+    }
+    if (!results.imagePaths.empty()) {
+        cv::waitKey(0);
+        cv::destroyAllWindows();
+    }
+    
+    return results;
 }

@@ -1,3 +1,6 @@
+/*
+@author: Alessio Marchetti
+*/
 #include "hybrid_approach.hpp"
 #include "process_images.hpp"
 #include <opencv2/features2d.hpp>
