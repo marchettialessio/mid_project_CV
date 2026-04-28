@@ -8,11 +8,23 @@
 #include <fstream>
 
 static double computeIoU(const cv::Rect &a, const cv::Rect &b) {
-    cv::Rect intersezione = a & b;
-    double interArea = intersezione.area();
+    cv::Rect intersection = a & b;
+    double interArea = intersection.area();
     double unionArea = a.area() + b.area() - interArea;
     if (unionArea <= 0.0) return 0.0;
     return interArea / unionArea;
+}
+
+void saveBoundingBox(const std::string& folderName, const cv::Rect& predicted, std::ofstream& ofs) {
+    int px1 = predicted.x;
+    int py1 = predicted.y;
+    int px2 = predicted.x + predicted.width;
+    int py2 = predicted.y + predicted.height;
+
+    std::cout << "  -Predicted BB (" << folderName << "): " << px1 << " " << py1 << " " << px2 << " " << py2 << std::endl;
+    if (ofs.is_open()) {
+        ofs << folderName << " " << px1 << " " << py1 << " " << px2 << " " << py2 << "\n";
+    }
 }
 
 EvaluationResults evaluatePerformance(const std::string& directory_progetto) {
@@ -24,30 +36,36 @@ EvaluationResults evaluatePerformance(const std::string& directory_progetto) {
         std::filesystem::create_directories(reportImagesPath);
     }
 
-    // ORB per la valutazione
-    cv::Ptr<cv::Feature2D> detector = cv::ORB::create();
+    // SIFT for evaluation
+    cv::Ptr<cv::Feature2D> detector = cv::SIFT::create();
     constexpr float minMotion = 0.2f;
 
     EvaluationResults results;
     results.correct_folders = 0;
     results.total_folders = 0;
 
+    const std::filesystem::path outBoxesFile = std::filesystem::path(directory_progetto) / "predicted_bounding_boxes.txt";
+    std::ofstream ofs(outBoxesFile);
+    if (!ofs.is_open()) {
+        std::cerr << "Failed to open " << outBoxesFile << " for writing bounding boxes." << std::endl;
+    }
+
     for (auto &entry : std::filesystem::directory_iterator(dataPath)) {
         std::string folderName = entry.path().filename().string();
         if (folderName == ".DS_Store" || !std::filesystem::is_directory(entry.path())) continue;
         std::cout << "Folder evaluation: " << folderName << std::endl;
 
-        // caricamento immagini
+        // load images
         std::vector<cv::Mat> images;
         loadImages(entry.path().string(), images);
 
         std::string currentImagePath = (reportImagesPath / (folderName + ".png")).string();
 
-        // codice di verifica sulla cartella corrente
+        // run evaluation on current folder
         cv::Rect predicted;
         processImageSequence(images, detector, minMotion, &predicted, currentImagePath);
 
-        // lettura labels, con squirrel serve specificare se double o single.
+        // read labels, for squirrel we need to specify either double or single
         std::filesystem::path labelFile;
         if(folderName == "squirrel") {
             labelFile = labelsPath / folderName / "double_squirrel" / "0000.txt";
@@ -56,11 +74,13 @@ EvaluationResults evaluatePerformance(const std::string& directory_progetto) {
             labelFile = labelsPath / folderName / "0000.txt";
         }
 
-        // creazione rettangolo corretto
+        // create ground truth rectangle
         std::ifstream ifs(labelFile);
-        int x1,y1,x2,y2;
-        ifs >> x1 >> y1 >> x2 >> y2;
-        cv::Rect gt(x1,y1, x2 - x1, y2 - y1);
+        int gt_x1, gt_y1, gt_x2, gt_y2;
+        ifs >> gt_x1 >> gt_y1 >> gt_x2 >> gt_y2;
+        cv::Rect gt(gt_x1, gt_y1, gt_x2 - gt_x1, gt_y2 - gt_y1);
+
+        saveBoundingBox(folderName, predicted, ofs);
 
         double iou = computeIoU(predicted, gt);
         std::cout << "  -IoU = " << iou << std::endl;
@@ -70,6 +90,10 @@ EvaluationResults evaluatePerformance(const std::string& directory_progetto) {
         if (iou > 0.5) results.correct_folders++;
         results.total_folders++;
 
+    }
+
+    if (ofs.is_open()) {
+        ofs.close();
     }
 
     results.meanIoU = 0.0;

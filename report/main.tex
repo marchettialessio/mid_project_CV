@@ -23,7 +23,7 @@ This project implements a system for detecting and localizing moving objects in 
 To build and run the project:
 
 \begin{enumerate}
-    \item add the images and labels folders in the \texttt{resources} folder, and diveded respectively in the \texttt{data} and \texttt{labels} folder;
+    \item add the images and labels folders in the \texttt{resources} folder, and divided respectively in the \texttt{data} and \texttt{labels} folder;
     \item open the terminal in \texttt{build} path and run \texttt{cmake ..}, \texttt{make};
     \item finally run \texttt{./bin/main} to execute the project;
     \item you can also run \texttt{./bin/main [folder name]} to execute on a specific images folder.
@@ -38,17 +38,24 @@ We started by trying different approaches for the task, in particular:
     \item Nicolò Spuri tested optical flow with a simple feature detector;
     \item Alessio Marchetti and Sirio Trentin tried to manually track features from one frame to the next, matching feature descriptors.
 \end{itemize}
-After several tests, we concluded that the best-performing feature detector is ORB. \\
+After several tests, we concluded that the best-performing feature detector for this task is SIFT. \\
 Then, Alessio Marchetti proposed and implemented a hybrid solution, combining the two previous approaches. A change was made in \texttt{evaluate\_performance.cpp}, where Nicolò Spuri implemented Optical Flow to track features from the current frame to the next. It works as follows:
 \begin{enumerate}
-    \item every \texttt{hybridApproachRate} iterations, the \texttt{updateTrackedKeypoints} method is called, and \textit{minMotion} is increased, in order to track only relevant features;
+    \item every \texttt{hybridApproachRate} iterations, the \texttt{updateTrackedKeypoints} method is called, and \texttt{minMotion} is increased, in order to track only relevant features;
     \item inside the method, the features that survived the previous optical flow iterations are saved in \texttt{verifiedFirstFrameKP};
     \item the current frame's features and descriptors are recomputed;
     \item a matching operation is performed between the initial and current frame descriptors;
     \item the matched features are returned, and optical flow is applied to them.
 \end{enumerate}
 This serves both to save keypoints after they have survived for some iterations, and to find new keypoints if they were initially stationary.
-Finally, Sirio Trentin implemented the testing of the project in \texttt{evaluate\_performance.cpp} and modified the algorithm to dynamically adapt the \texttt{minMotion} distance threshold if the number of keypoints decreases too quickly during the optical flow iterations.
+Finally, Sirio Trentin implemented the testing of the project in \texttt{evaluate\_performance.cpp} and modified the algorithm to dynamically adapt the \texttt{minMotion} distance threshold if the number of keypoints decreases too quickly during the optical flow iterations.\\
+
+\subsection{Workload per member}
+\begin{itemize}
+    \item Sirio Trentin: 7 hours
+    \item Alessio Marchetti: 7.5 hours 
+    \item Nicolò Spuri: 8 hours
+\end{itemize}
 
 \section{Results}
 The project performance on the target dataset (including bird, car, frog, sheep, and squirrel sequences) is evaluated using Mean Intersection over Union (mIoU) and Detection Accuracy (IoU $> 0.5$). 

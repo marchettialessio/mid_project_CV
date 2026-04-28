@@ -86,7 +86,7 @@ void processImageSequence(std::vector<cv::Mat> images, cv::Ptr<cv::Feature2D> de
         //std::cout << "prev_surviving_count: " << prev_surviving_count << std::endl;
 
         //If the number of keypoints is much less than the previous iteration, we change the threshold.
-        if (prev_surviving_count >= survivingKP.size()*3 && survivingKP.size() < 40)
+        if (prev_surviving_count >= survivingKP.size()*3 && survivingKP.size() <= 5)
         {
             minMotion = std::max(minMotion - 0.01f, 1e-6f); //Update of minMotion.
 
@@ -105,7 +105,7 @@ void processImageSequence(std::vector<cv::Mat> images, cv::Ptr<cv::Feature2D> de
             continue;
         }
 
-        else if(survivingKP.size() <= 20) {
+        else if(survivingKP.size() <= 5) {
             std::cout << "Not enough keypoints to track. Ending process." << std::endl;
             if (savePath == "display") {
                 cv::imshow("Frame" + std::to_string(i), img);
