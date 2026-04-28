@@ -1,3 +1,7 @@
+/*
+@author: Nicolò Spuri
+*/
+
 #ifndef OPTICAL_FLOW_HPP
 #define OPTICAL_FLOW_HPP
 
@@ -14,6 +18,13 @@ public:
 
     std::vector<cv::Point2f> getSurvivingKP() const {
         return survivingKP;
+    }
+    void setSurvivingKP(const std::vector<cv::Point2f>& newSurvivingKP) {
+        survivingKP = newSurvivingKP;
+    }
+
+    void setCurrKP(const std::vector<cv::Point2f>& newCurrKP) {
+        currKP = newCurrKP;
     }
 
     // Function to calculate optical flow and filter keypoints based on motion

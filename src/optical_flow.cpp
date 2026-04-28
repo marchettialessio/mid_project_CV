@@ -1,3 +1,6 @@
+/*
+@author: Nicolò Spuri
+*/
 #include "optical_flow.hpp"
 #include <opencv2/video.hpp>
 

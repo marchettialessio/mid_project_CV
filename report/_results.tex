@@ -1,0 +1,70 @@
+\begin{table}[htbp]
+\centering
+\begin{minipage}{0.45\textwidth}
+\centering
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Category} & \textbf{IoU} \\
+\hline
+car & 0.7983 \\
+sheep & 0.6711 \\
+bird & 0.5073 \\
+frog & 0.7492 \\
+squirrel & 0.0832 \\
+\hline
+\end{tabular}
+\caption{IoU per category.}
+\label{tab:iou_per_category}
+\end{minipage} \hfill
+\begin{minipage}{0.45\textwidth}
+\centering
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Metric} & \textbf{Value} \\
+\hline
+Mean IoU & 0.5618 \\
+Accuracy & 0.8000 (4/5) \\
+\hline
+\end{tabular}
+\caption{Overall Performance Metrics.}
+\label{tab:overall_metrics}
+\end{minipage}
+\end{table}
+
+\clearpage
+\section*{Initial Frame Tracking Results}
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{0.32\textwidth}
+\centering
+\includegraphics[width=\textwidth]{images/car.png}
+\vspace{0.2cm}
+\textbf{car}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\includegraphics[width=\textwidth]{images/sheep.png}
+\vspace{0.2cm}
+\textbf{sheep}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\includegraphics[width=\textwidth]{images/bird.png}
+\vspace{0.2cm}
+\textbf{bird}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\includegraphics[width=\textwidth]{images/frog.png}
+\vspace{0.2cm}
+\textbf{frog}
+\end{minipage}\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\includegraphics[width=\textwidth]{images/squirrel.png}
+\vspace{0.2cm}
+\textbf{squirrel}
+\end{minipage}\hfill
+\caption{Initial Frame for each category with tracked bounding box.}
+\end{figure}
+

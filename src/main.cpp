@@ -1,18 +1,26 @@
+/*
+@author: Sirio Trentin
+*/
 #include <opencv2/features2d.hpp>
 #include <opencv2/highgui.hpp>
 #include "utils.hpp"
 #include "process_images.hpp"
+#include "evaluate_performace.hpp"
+#include "report_generator.hpp"
 #include <iostream>
 #include <vector>
 #include <filesystem>
 
 int main(int argc, char** argv) {
-    if (argc < 2) {
-        std::cerr << "You have to specify the folder" << argv[0];
-        return -1;
+
+    //if nothing specified, run evaluation and generate report
+    if (argc == 1) {
+        EvaluationResults results = evaluatePerformance(PROJECT_SOURCE_DIR);
+        generateLatexResults(results, std::string(PROJECT_SOURCE_DIR) + "/report");
+        return 0;
     }
 
-    // Get the foldetpath
+    // otherwise, run the tracking on the specified folder with the specified detector
     std::string folderName = argv[1];
 
     const std::filesystem::path path = std::filesystem::path(PROJECT_SOURCE_DIR) / "resources" / "data" /  folderName;
@@ -27,16 +35,12 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    constexpr float minMotion = 0.005f;
-    // bird
-    // car 0.4f SIFT
-    // frog 0.005f SIFT
-    // sheep 0.05
-    // squirrel
+    constexpr float minMotion = 0.2f;
 
-    cv::Ptr<cv::SIFT> detector = cv::SIFT::create();
+    cv::Ptr<cv::Feature2D> detector = cv::ORB::create();
 
-    processImageSequence<cv::SIFT>(images, detector, minMotion);
+    // Call processImageSequence with savePath="display" to show results
+    processImageSequence(images, detector, minMotion, nullptr, "display");
 
     while (cv::waitKey() != 'q' && cv::waitKey() != 27) {
         // Wait until user presses 'q' or 'ESC'
