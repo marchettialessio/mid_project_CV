@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 
     constexpr float minMotion = 0.2f;
 
-    cv::Ptr<cv::Feature2D> detector = cv::ORB::create();
+    cv::Ptr<cv::Feature2D> detector = cv::SIFT::create();
 
     // Call processImageSequence with savePath="display" to show results
     processImageSequence(images, detector, minMotion, nullptr, "display");
